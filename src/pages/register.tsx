@@ -6,32 +6,134 @@ import {
   Heading,
   Input,
 } from '@chakra-ui/react'
-import { Field, Form, Formik } from 'formik'
+import axios from 'axios'
+import { Field, FieldProps, Form, Formik, FormikProps } from 'formik'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import validate from 'validate.js'
+import { IFieldErrors, IUserRegisterData } from '../types'
 import { registerConstraints } from '../utils/constaints'
 import { normalize, trimNormalize } from '../utils/validatejs'
+
+async function registerUser(userData: IUserRegisterData) {
+  try {
+    await axios.post('api/users/register', userData)
+  } catch (err) {
+    if (err.response?.data) {
+      const fieldErrors: IFieldErrors = err.response.data.fields
+      return fieldErrors
+    }
+  }
+}
+
+type IFieldNomalizations<UserData> = {
+  [key in keyof UserData]: (value?: string) => void
+}
+
+const normalizations: IFieldNomalizations<IUserRegisterData> = {
+  name: trimNormalize,
+  email: trimNormalize,
+  password: normalize,
+}
+
+const userData: IUserRegisterData = {
+  name: '',
+  email: '',
+  password: '',
+}
+
+const textFields: TextFieldProps<IUserRegisterData>[] = [
+  {
+    fieldName: 'name',
+    fieldText: 'Name',
+    inputType: 'text',
+  },
+  {
+    fieldName: 'email',
+    fieldText: 'Email',
+    inputType: 'email',
+  },
+  {
+    fieldName: 'password',
+    fieldText: 'Password',
+    inputType: 'password',
+  },
+]
+
+const validateField = (field?: keyof IUserRegisterData, value?: string) => {
+  if (!field) return
+  const normalized = normalizations[field]!(value)
+  const errors = validate(
+    { [field]: normalized },
+    { [field]: registerConstraints[field] }
+  ) as { [key: string]: string[] } | undefined
+  if (errors) {
+    return errors[field]
+  }
+}
+
+// TextFieldComponent
+
+interface TextFieldProps<Data> {
+  fieldName: keyof Data
+  inputType: string
+  fieldText: string
+}
+
+const TextField: React.FC<TextFieldProps<IUserRegisterData>> = ({
+  fieldName,
+  inputType,
+  fieldText,
+}) => {
+  return (
+    <Field
+      name={fieldName}
+      validate={(value?: string) => validateField(fieldName, value)}
+    >
+      {({ field, form }: FieldProps<IUserRegisterData, IUserRegisterData>) => (
+        <FormControl
+          isInvalid={!!form.errors[fieldName] && !!form.touched[fieldName]}
+          mb={6}
+        >
+          <FormLabel htmlFor={fieldName}>{fieldText}</FormLabel>
+          <Input {...(field as any)} id={fieldName} type={inputType}></Input>
+          {((form.errors[fieldName] as unknown) as string[])?.map(
+            (value, i) => (
+              <FormErrorMessage key={i} mt={i ? 0 : 2}>
+                {value}
+              </FormErrorMessage>
+            )
+          )}
+        </FormControl>
+      )}
+    </Field>
+  )
+}
+
+// Register
 
 interface RegisterProps {}
 
 const Register: React.FC<RegisterProps> = () => {
-  const validateField = ({ field, value }: any) => {
-    if (!field) return
-    const constraints: any = registerConstraints
-    const errors = validate({ [field]: value }, { [field]: constraints[field] })
-    if (errors) return errors[field]
+  const history = useHistory()
+
+  const isSubmitDisabled = (props: FormikProps<IUserRegisterData>) => {
+    return (Object.getOwnPropertyNames(userData) as [
+      keyof IUserRegisterData
+    ]).some((key) => !!props.touched[key] && props.errors[key])
   }
 
   return (
     <Formik
-      initialValues={{
-        name: '',
-        email: '',
-        password: '',
-      }}
-      onSubmit={() => {
-        return alert('done')
+      initialValues={userData}
+      onSubmit={async (userData, { setErrors }) => {
+        const fieldErrors = await registerUser(userData)
+
+        if (fieldErrors) {
+          return setErrors(fieldErrors)
+        }
+
+        return history.push('/login')
       }}
     >
       {(props) => (
@@ -39,82 +141,19 @@ const Register: React.FC<RegisterProps> = () => {
           <Heading as="h1" mb={6}>
             Register
           </Heading>
-          <Field
-            name="name"
-            validate={(value?: string) => {
-              const normalized = trimNormalize(value)
-              return validateField({ field: 'name', value: normalized })
-            }}
-          >
-            {({ field, form }: any) => (
-              <FormControl
-                isInvalid={form.errors.name && form.touched.name}
-                mb={6}
-              >
-                <FormLabel htmlFor="name">Name</FormLabel>
-                <Input {...field} id="name"></Input>
-                {form.errors.name?.map((message: string, i: number) => {
-                  return (
-                    <FormErrorMessage key={i} mt={i > 0 ? 0 : 1}>
-                      {message}
-                    </FormErrorMessage>
-                  )
-                })}
-              </FormControl>
-            )}
-          </Field>
-          <Field
-            name="email"
-            validate={(value: string) => {
-              const normalized = trimNormalize(value)
-              return validateField({ field: 'email', value: normalized })
-            }}
-          >
-            {({ field, form }: any) => (
-              <FormControl
-                mb={6}
-                isInvalid={form.errors.email && form.touched.email}
-              >
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <Input {...field} type="email" id="email"></Input>
-                {form.errors.email?.map((message: string, i: number) => {
-                  return (
-                    <FormErrorMessage key={i} mt={i > 0 ? 0 : 1}>
-                      {message}
-                    </FormErrorMessage>
-                  )
-                })}
-              </FormControl>
-            )}
-          </Field>
-          <Field
-            name="password"
-            validate={(value: string) => {
-              const normalized = normalize(value)
-              return validateField({ field: 'password', value: normalized })
-            }}
-          >
-            {({ field, form }: any) => (
-              <FormControl
-                mb={6}
-                isInvalid={form.errors.password && form.touched.password}
-              >
-                <FormLabel htmlFor="password">Password</FormLabel>
-                <Input {...field} type="password" id="password"></Input>
-                {form.errors.password?.map((message: string, i: number) => {
-                  return (
-                    <FormErrorMessage key={i} mt={i > 0 ? 0 : 1}>
-                      {message}
-                    </FormErrorMessage>
-                  )
-                })}
-              </FormControl>
-            )}
-          </Field>
+          {textFields.map((textField, i) => (
+            <TextField
+              key={i}
+              fieldName={textField.fieldName}
+              inputType={textField.inputType}
+              fieldText={textField.fieldText}
+            />
+          ))}
           <Button
             w="100%"
             colorScheme="purple"
             isLoading={props.isSubmitting}
+            isDisabled={isSubmitDisabled(props)}
             type="submit"
             mb={6}
           >
