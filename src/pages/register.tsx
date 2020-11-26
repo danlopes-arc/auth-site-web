@@ -8,11 +8,21 @@ import {
 } from '@chakra-ui/react'
 import { Field, Form, Formik } from 'formik'
 import React from 'react'
+import { Link } from 'react-router-dom'
+import validate from 'validate.js'
+import { registerConstraints } from '../utils/constaints'
+import { normalize, trimNormalize } from '../utils/validatejs'
 
 interface RegisterProps {}
 
 const Register: React.FC<RegisterProps> = () => {
-  const validateField = (...rest: any[]) => {}
+  const validateField = ({ field, value }: any) => {
+    if (!field) return
+    const constraints: any = registerConstraints
+    const errors = validate({ [field]: value }, { [field]: constraints[field] })
+    if (errors) return errors[field]
+  }
+
   return (
     <Formik
       initialValues={{
@@ -20,14 +30,22 @@ const Register: React.FC<RegisterProps> = () => {
         email: '',
         password: '',
       }}
-      onSubmit={() => {}}
+      onSubmit={() => {
+        return alert('done')
+      }}
     >
       {(props) => (
         <Form>
           <Heading as="h1" mb={6}>
             Register
           </Heading>
-          <Field name="name" validate={validateField}>
+          <Field
+            name="name"
+            validate={(value?: string) => {
+              const normalized = trimNormalize(value)
+              return validateField({ field: 'name', value: normalized })
+            }}
+          >
             {({ field, form }: any) => (
               <FormControl
                 isInvalid={form.errors.name && form.touched.name}
@@ -35,11 +53,23 @@ const Register: React.FC<RegisterProps> = () => {
               >
                 <FormLabel htmlFor="name">Name</FormLabel>
                 <Input {...field} id="name"></Input>
-                <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                {form.errors.name?.map((message: string, i: number) => {
+                  return (
+                    <FormErrorMessage key={i} mt={i > 0 ? 0 : 1}>
+                      {message}
+                    </FormErrorMessage>
+                  )
+                })}
               </FormControl>
             )}
           </Field>
-          <Field name="email" validate={validateField}>
+          <Field
+            name="email"
+            validate={(value: string) => {
+              const normalized = trimNormalize(value)
+              return validateField({ field: 'email', value: normalized })
+            }}
+          >
             {({ field, form }: any) => (
               <FormControl
                 mb={6}
@@ -47,11 +77,23 @@ const Register: React.FC<RegisterProps> = () => {
               >
                 <FormLabel htmlFor="email">Email</FormLabel>
                 <Input {...field} type="email" id="email"></Input>
-                <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+                {form.errors.email?.map((message: string, i: number) => {
+                  return (
+                    <FormErrorMessage key={i} mt={i > 0 ? 0 : 1}>
+                      {message}
+                    </FormErrorMessage>
+                  )
+                })}
               </FormControl>
             )}
           </Field>
-          <Field name="password" validate={validateField}>
+          <Field
+            name="password"
+            validate={(value: string) => {
+              const normalized = normalize(value)
+              return validateField({ field: 'password', value: normalized })
+            }}
+          >
             {({ field, form }: any) => (
               <FormControl
                 mb={6}
@@ -59,7 +101,13 @@ const Register: React.FC<RegisterProps> = () => {
               >
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <Input {...field} type="password" id="password"></Input>
-                <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                {form.errors.password?.map((message: string, i: number) => {
+                  return (
+                    <FormErrorMessage key={i} mt={i > 0 ? 0 : 1}>
+                      {message}
+                    </FormErrorMessage>
+                  )
+                })}
               </FormControl>
             )}
           </Field>
@@ -73,9 +121,10 @@ const Register: React.FC<RegisterProps> = () => {
             Register
           </Button>
           <Button
+            as={Link}
+            to="/login"
             w="100%"
             colorScheme="gray"
-            isLoading={props.isSubmitting}
             type="submit"
             size="sm"
           >
