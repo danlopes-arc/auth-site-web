@@ -5,9 +5,9 @@ import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import TextField, { TextFieldProps } from '../components/TextField'
 import { IFieldErrors, IUserLoginData } from '../types'
-import { loginConstraints } from '../utils/constaints'
-import { validateField } from '../utils/validate'
-import { normalize, trimNormalize } from '../utils/validatejs'
+import { loginConstraints } from '../utils/validation/constaints'
+import { validateField } from '../utils/validation/validate'
+import { normalize, trimNormalize } from '../utils/normalization'
 
 async function login(userData: IUserLoginData) {
   try {
