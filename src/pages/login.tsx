@@ -4,30 +4,30 @@ import { Form, Formik, FormikProps } from 'formik'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import TextField, { TextFieldProps } from '../components/TextField'
-import { IFieldErrors, IUserLoginData } from '../types'
+import { FieldErrors, UserLoginData } from '../types'
 import { loginConstraints } from '../utils/validation/constaints'
 import { validateField } from '../utils/validation/validate'
 import { normalize, trimNormalize } from '../utils/normalization'
 
-async function login(userData: IUserLoginData) {
+async function login(userData: UserLoginData) {
   try {
     const token = await axios.post('api/users/login', userData)
     console.log('token:', token)
   } catch (err) {
     if (err.response?.data) {
-      const fieldErrors: IFieldErrors = err.response.data.fields
+      const fieldErrors: FieldErrors<UserLoginData> = err.response.data.fields
       return fieldErrors
     }
   }
 }
 
-const textFields: TextFieldProps<IUserLoginData>[] = [
+const textFields: TextFieldProps<UserLoginData>[] = [
   {
     fieldName: 'email',
     fieldText: 'Email',
     inputType: 'email',
     validate: (field, value) =>
-      validateField<IUserLoginData>(
+      validateField<UserLoginData>(
         field,
         trimNormalize(value),
         loginConstraints
@@ -38,11 +38,11 @@ const textFields: TextFieldProps<IUserLoginData>[] = [
     fieldText: 'Password',
     inputType: 'password',
     validate: (field, value) =>
-      validateField<IUserLoginData>(field, normalize(value), loginConstraints),
+      validateField<UserLoginData>(field, normalize(value), loginConstraints),
   },
 ]
 
-const userData: IUserLoginData = {
+const userData: UserLoginData = {
   email: '',
   password: '',
 }
@@ -52,10 +52,10 @@ interface LoginProps {}
 const Login: React.FC<LoginProps> = () => {
   const history = useHistory()
 
-  const isSubmitDisabled = (props: FormikProps<IUserLoginData>) => {
-    return (Object.getOwnPropertyNames(userData) as [
-      keyof IUserLoginData
-    ]).some((key) => !!props.touched[key] && props.errors[key])
+  const isSubmitDisabled = (props: FormikProps<UserLoginData>) => {
+    return (Object.getOwnPropertyNames(userData) as [keyof UserLoginData]).some(
+      (key) => !!props.touched[key] && props.errors[key]
+    )
   }
 
   return (
@@ -65,7 +65,7 @@ const Login: React.FC<LoginProps> = () => {
         const fieldErrors = await login(userData)
 
         if (fieldErrors) {
-          return setErrors(fieldErrors)
+          return setErrors(fieldErrors as any)
         }
 
         return history.push('/me')

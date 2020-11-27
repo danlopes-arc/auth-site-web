@@ -1,8 +1,5 @@
 import validate from 'validate.js'
-
-type DataConstraints<Data> = {
-  [key in keyof Data & string]: any
-}
+import { DataConstraints } from '../../types'
 
 export const validateField = <Data>(
   field: (keyof Data & string) | undefined,
@@ -10,5 +7,7 @@ export const validateField = <Data>(
   constraints: DataConstraints<Data>
 ) => {
   if (!field) return
-  return validate({ [field]: value }, { [field]: constraints[field] })?.[field]
+  return validate({ [field]: value }, { [field]: constraints[field] })?.[
+    field
+  ] as string[] | undefined
 }

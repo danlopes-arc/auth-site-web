@@ -4,29 +4,30 @@ import { Form, Formik, FormikProps } from 'formik'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import TextField, { TextFieldProps } from '../components/TextField'
-import { IFieldErrors, IUserRegisterData } from '../types'
+import { FieldErrors, UserRegisterData } from '../types'
 import { registerConstraints } from '../utils/validation/constaints'
 import { validateField } from '../utils/validation/validate'
 import { normalize, trimNormalize } from '../utils/normalization'
 
-async function registerUser(userData: IUserRegisterData) {
+async function registerUser(userData: UserRegisterData) {
   try {
     await axios.post('api/users/register', userData)
   } catch (err) {
     if (err.response?.data) {
-      const fieldErrors: IFieldErrors = err.response.data.fields
+      const fieldErrors: FieldErrors<UserRegisterData> =
+        err.response.data.fields
       return fieldErrors
     }
   }
 }
 
-const textFields: TextFieldProps<IUserRegisterData>[] = [
+const textFields: TextFieldProps<UserRegisterData>[] = [
   {
     fieldName: 'name',
     fieldText: 'Name',
     inputType: 'text',
     validate: (field, value) =>
-      validateField<IUserRegisterData>(
+      validateField<UserRegisterData>(
         field,
         trimNormalize(value),
         registerConstraints
@@ -37,7 +38,7 @@ const textFields: TextFieldProps<IUserRegisterData>[] = [
     fieldText: 'Email',
     inputType: 'email',
     validate: (field, value) =>
-      validateField<IUserRegisterData>(
+      validateField<UserRegisterData>(
         field,
         trimNormalize(value),
         registerConstraints
@@ -48,7 +49,7 @@ const textFields: TextFieldProps<IUserRegisterData>[] = [
     fieldText: 'Password',
     inputType: 'password',
     validate: (field, value) =>
-      validateField<IUserRegisterData>(
+      validateField<UserRegisterData>(
         field,
         normalize(value),
         registerConstraints
@@ -56,7 +57,7 @@ const textFields: TextFieldProps<IUserRegisterData>[] = [
   },
 ]
 
-const userData: IUserRegisterData = {
+const userData: UserRegisterData = {
   name: '',
   email: '',
   password: '',
@@ -67,9 +68,9 @@ interface RegisterProps {}
 const Register: React.FC<RegisterProps> = () => {
   const history = useHistory()
 
-  const isSubmitDisabled = (props: FormikProps<IUserRegisterData>) => {
+  const isSubmitDisabled = (props: FormikProps<UserRegisterData>) => {
     return (Object.getOwnPropertyNames(userData) as [
-      keyof IUserRegisterData
+      keyof UserRegisterData
     ]).some((key) => !!props.touched[key] && props.errors[key])
   }
 
@@ -80,7 +81,7 @@ const Register: React.FC<RegisterProps> = () => {
         const fieldErrors = await registerUser(userData)
 
         if (fieldErrors) {
-          return setErrors(fieldErrors)
+          return setErrors(fieldErrors as any)
         }
 
         return history.push('/login')

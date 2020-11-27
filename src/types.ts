@@ -1,25 +1,29 @@
-export interface IUserInfo {
+export type UserInfo = {
   id: any
   name: string
   email: string
 }
 
-export interface IUserRegisterData {
-  name?: string
-  email?: string
-  password?: string
+export type UserRegisterData = {
+  name: string
+  email: string
+  password: string
 }
 
-export interface IUserLoginData {
-  email?: string
-  password?: string
+export type UserLoginData = {
+  email: string
+  password: string
 }
 
-export interface IFormError {
+export type FormError<Data> = {
   message: string
-  fields: IFieldErrors
+  fields: FieldErrors<Data>
 }
 
-export interface IFieldErrors {
-  [key: string]: string[]
+export type FieldErrors<Data> = {
+  [key in keyof Data & string]?: string[]
+}
+
+export type DataConstraints<Data> = {
+  [key in keyof Data & string]: any
 }
