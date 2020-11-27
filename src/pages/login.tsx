@@ -4,15 +4,15 @@ import { Form, Formik, FormikProps } from 'formik'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import TextField, { TextFieldProps } from '../components/TextField'
-import { FieldErrors, UserLoginData } from '../types'
+import { FieldErrors, LoginResponseData, UserLoginData } from '../types'
 import { loginConstraints } from '../utils/validation/constaints'
 import { validateField } from '../utils/validation/validate'
 import { normalize, trimNormalize } from '../utils/normalization'
 
 async function login(userData: UserLoginData) {
   try {
-    const token = await axios.post('api/users/login', userData)
-    console.log('token:', token)
+    const res = await axios.post<LoginResponseData>('api/users/login', userData)
+    localStorage.setItem('token', res.data.token)
   } catch (err) {
     if (err.response?.data) {
       const fieldErrors: FieldErrors<UserLoginData> = err.response.data.fields

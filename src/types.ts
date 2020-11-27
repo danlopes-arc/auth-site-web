@@ -27,3 +27,11 @@ export type FieldErrors<Data> = {
 export type DataConstraints<Data> = {
   [key in keyof Data & string]: any
 }
+
+export type MeResponseData = {
+  user: UserInfo
+}
+
+export type LoginResponseData = {
+  token: string
+}
