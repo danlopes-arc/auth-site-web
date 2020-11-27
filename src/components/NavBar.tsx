@@ -16,9 +16,9 @@ const NavBar: React.FC<NavBarProps> = () => {
         <Button onClick={toggleColorMode}>
           {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
         </Button>
-        <Button as="a" href="/login" ml={2}>
-          Login
-        </Button>
+        <Link to="/login">
+          <Button ml={2}>Login</Button>
+        </Link>
         <Link to="/register">
           <Button ml={2} colorScheme="purple">
             Register
