@@ -1,25 +1,18 @@
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Input,
-} from '@chakra-ui/react'
+import { Button, Heading } from '@chakra-ui/react'
 import axios from 'axios'
-import { Field, FieldProps, Form, Formik, FormikProps } from 'formik'
+import { Form, Formik, FormikProps } from 'formik'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import validate from 'validate.js'
+import TextField, { TextFieldProps } from '../components/TextField'
 import { IFieldErrors, IUserLoginData } from '../types'
 import { loginConstraints } from '../utils/constaints'
+import { validateField } from '../utils/validate'
 import { normalize, trimNormalize } from '../utils/validatejs'
 
 async function login(userData: IUserLoginData) {
   try {
     const token = await axios.post('api/users/login', userData)
-    console.log('token:', token);
-    
+    console.log('token:', token)
   } catch (err) {
     if (err.response?.data) {
       const fieldErrors: IFieldErrors = err.response.data.fields
@@ -28,84 +21,31 @@ async function login(userData: IUserLoginData) {
   }
 }
 
-type IFieldNomalizations<UserData> = {
-  [key in keyof UserData]: (value?: string) => string | null
-}
-
-const normalizations: IFieldNomalizations<IUserLoginData> = {
-  email: trimNormalize,
-  password: normalize,
-}
-
-const userData: IUserLoginData = {
-  email: '',
-  password: '',
-}
-
 const textFields: TextFieldProps<IUserLoginData>[] = [
   {
     fieldName: 'email',
     fieldText: 'Email',
     inputType: 'email',
+    validate: (field, value) =>
+      validateField<IUserLoginData>(
+        field,
+        trimNormalize(value),
+        loginConstraints
+      ),
   },
   {
     fieldName: 'password',
     fieldText: 'Password',
     inputType: 'password',
+    validate: (field, value) =>
+      validateField<IUserLoginData>(field, normalize(value), loginConstraints),
   },
 ]
 
-const validateField = (field?: keyof IUserLoginData, value?: string) => {
-  if (!field) return
-  const normalized = normalizations[field]!(value)
-  const errors = validate(
-    { [field]: normalized },
-    { [field]: loginConstraints[field] }
-  ) as { [key: string]: string[] } | undefined
-  if (errors) {
-    return errors[field]
-  }
+const userData: IUserLoginData = {
+  email: '',
+  password: '',
 }
-
-// TextFieldComponent
-
-interface TextFieldProps<Data> {
-  fieldName: keyof Data
-  inputType: string
-  fieldText: string
-}
-
-const TextField: React.FC<TextFieldProps<IUserLoginData>> = ({
-  fieldName,
-  inputType,
-  fieldText,
-}) => {
-  return (
-    <Field
-      name={fieldName}
-      validate={(value?: string) => validateField(fieldName, value)}
-    >
-      {({ field, form }: FieldProps<IUserLoginData, IUserLoginData>) => (
-        <FormControl
-          isInvalid={!!form.errors[fieldName] && !!form.touched[fieldName]}
-          mb={6}
-        >
-          <FormLabel htmlFor={fieldName}>{fieldText}</FormLabel>
-          <Input {...(field as any)} id={fieldName} type={inputType}></Input>
-          {((form.errors[fieldName] as unknown) as string[])?.map(
-            (value, i) => (
-              <FormErrorMessage key={i} mt={i ? 0 : 2}>
-                {value}
-              </FormErrorMessage>
-            )
-          )}
-        </FormControl>
-      )}
-    </Field>
-  )
-}
-
-// Register
 
 interface LoginProps {}
 
@@ -142,6 +82,7 @@ const Login: React.FC<LoginProps> = () => {
               fieldName={textField.fieldName}
               inputType={textField.inputType}
               fieldText={textField.fieldText}
+              validate={textField.validate}
             />
           ))}
           <Button

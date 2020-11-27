@@ -1,18 +1,12 @@
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
-  Input,
-} from '@chakra-ui/react'
+import { Button, Heading } from '@chakra-ui/react'
 import axios from 'axios'
-import { Field, FieldProps, Form, Formik, FormikProps } from 'formik'
+import { Form, Formik, FormikProps } from 'formik'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import validate from 'validate.js'
+import TextField, { TextFieldProps } from '../components/TextField'
 import { IFieldErrors, IUserRegisterData } from '../types'
 import { registerConstraints } from '../utils/constaints'
+import { validateField } from '../utils/validate'
 import { normalize, trimNormalize } from '../utils/validatejs'
 
 async function registerUser(userData: IUserRegisterData) {
@@ -26,91 +20,47 @@ async function registerUser(userData: IUserRegisterData) {
   }
 }
 
-type IFieldNomalizations<UserData> = {
-  [key in keyof UserData]: (value?: string) => string | null
-}
-
-const normalizations: IFieldNomalizations<IUserRegisterData> = {
-  name: trimNormalize,
-  email: trimNormalize,
-  password: normalize,
-}
+const textFields: TextFieldProps<IUserRegisterData>[] = [
+  {
+    fieldName: 'name',
+    fieldText: 'Name',
+    inputType: 'text',
+    validate: (field, value) =>
+      validateField<IUserRegisterData>(
+        field,
+        trimNormalize(value),
+        registerConstraints
+      ),
+  },
+  {
+    fieldName: 'email',
+    fieldText: 'Email',
+    inputType: 'email',
+    validate: (field, value) =>
+      validateField<IUserRegisterData>(
+        field,
+        trimNormalize(value),
+        registerConstraints
+      ),
+  },
+  {
+    fieldName: 'password',
+    fieldText: 'Password',
+    inputType: 'password',
+    validate: (field, value) =>
+      validateField<IUserRegisterData>(
+        field,
+        normalize(value),
+        registerConstraints
+      ),
+  },
+]
 
 const userData: IUserRegisterData = {
   name: '',
   email: '',
   password: '',
 }
-
-const textFields: TextFieldProps<IUserRegisterData>[] = [
-  {
-    fieldName: 'name',
-    fieldText: 'Name',
-    inputType: 'text',
-  },
-  {
-    fieldName: 'email',
-    fieldText: 'Email',
-    inputType: 'email',
-  },
-  {
-    fieldName: 'password',
-    fieldText: 'Password',
-    inputType: 'password',
-  },
-]
-
-const validateField = (field?: keyof IUserRegisterData, value?: string) => {
-  if (!field) return
-  const normalized = normalizations[field]!(value)
-  const errors = validate(
-    { [field]: normalized },
-    { [field]: registerConstraints[field] }
-  ) as { [key: string]: string[] } | undefined
-  if (errors) {
-    return errors[field]
-  }
-}
-
-// TextFieldComponent
-
-interface TextFieldProps<Data> {
-  fieldName: keyof Data
-  inputType: string
-  fieldText: string
-}
-
-const TextField: React.FC<TextFieldProps<IUserRegisterData>> = ({
-  fieldName,
-  inputType,
-  fieldText,
-}) => {
-  return (
-    <Field
-      name={fieldName}
-      validate={(value?: string) => validateField(fieldName, value)}
-    >
-      {({ field, form }: FieldProps<IUserRegisterData, IUserRegisterData>) => (
-        <FormControl
-          isInvalid={!!form.errors[fieldName] && !!form.touched[fieldName]}
-          mb={6}
-        >
-          <FormLabel htmlFor={fieldName}>{fieldText}</FormLabel>
-          <Input {...(field as any)} id={fieldName} type={inputType}></Input>
-          {((form.errors[fieldName] as unknown) as string[])?.map(
-            (value, i) => (
-              <FormErrorMessage key={i} mt={i ? 0 : 2}>
-                {value}
-              </FormErrorMessage>
-            )
-          )}
-        </FormControl>
-      )}
-    </Field>
-  )
-}
-
-// Register
 
 interface RegisterProps {}
 
@@ -147,6 +97,7 @@ const Register: React.FC<RegisterProps> = () => {
               fieldName={textField.fieldName}
               inputType={textField.inputType}
               fieldText={textField.fieldText}
+              validate={textField.validate}
             />
           ))}
           <Button
