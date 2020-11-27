@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import NavBar from './components/NavBar';
 
 import Index from './pages/index'
+import Login from './pages/login';
 import Register from './pages/register';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Switch>
               <Route path="/" exact component={Index} />
               <Route path="/register" exact component={Register} />
+              <Route path="/login" exact component={Login} />
             </Switch>
           </Container>
         </BrowserRouter>

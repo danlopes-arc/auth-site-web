@@ -11,13 +11,15 @@ import { Field, FieldProps, Form, Formik, FormikProps } from 'formik'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import validate from 'validate.js'
-import { IFieldErrors, IUserRegisterData } from '../types'
-import { registerConstraints } from '../utils/constaints'
+import { IFieldErrors, IUserLoginData } from '../types'
+import { loginConstraints } from '../utils/constaints'
 import { normalize, trimNormalize } from '../utils/validatejs'
 
-async function registerUser(userData: IUserRegisterData) {
+async function login(userData: IUserLoginData) {
   try {
-    await axios.post('api/users/register', userData)
+    const token = await axios.post('api/users/login', userData)
+    console.log('token:', token);
+    
   } catch (err) {
     if (err.response?.data) {
       const fieldErrors: IFieldErrors = err.response.data.fields
@@ -30,24 +32,17 @@ type IFieldNomalizations<UserData> = {
   [key in keyof UserData]: (value?: string) => string | null
 }
 
-const normalizations: IFieldNomalizations<IUserRegisterData> = {
-  name: trimNormalize,
+const normalizations: IFieldNomalizations<IUserLoginData> = {
   email: trimNormalize,
   password: normalize,
 }
 
-const userData: IUserRegisterData = {
-  name: '',
+const userData: IUserLoginData = {
   email: '',
   password: '',
 }
 
-const textFields: TextFieldProps<IUserRegisterData>[] = [
-  {
-    fieldName: 'name',
-    fieldText: 'Name',
-    inputType: 'text',
-  },
+const textFields: TextFieldProps<IUserLoginData>[] = [
   {
     fieldName: 'email',
     fieldText: 'Email',
@@ -60,12 +55,12 @@ const textFields: TextFieldProps<IUserRegisterData>[] = [
   },
 ]
 
-const validateField = (field?: keyof IUserRegisterData, value?: string) => {
+const validateField = (field?: keyof IUserLoginData, value?: string) => {
   if (!field) return
   const normalized = normalizations[field]!(value)
   const errors = validate(
     { [field]: normalized },
-    { [field]: registerConstraints[field] }
+    { [field]: loginConstraints[field] }
   ) as { [key: string]: string[] } | undefined
   if (errors) {
     return errors[field]
@@ -80,7 +75,7 @@ interface TextFieldProps<Data> {
   fieldText: string
 }
 
-const TextField: React.FC<TextFieldProps<IUserRegisterData>> = ({
+const TextField: React.FC<TextFieldProps<IUserLoginData>> = ({
   fieldName,
   inputType,
   fieldText,
@@ -90,7 +85,7 @@ const TextField: React.FC<TextFieldProps<IUserRegisterData>> = ({
       name={fieldName}
       validate={(value?: string) => validateField(fieldName, value)}
     >
-      {({ field, form }: FieldProps<IUserRegisterData, IUserRegisterData>) => (
+      {({ field, form }: FieldProps<IUserLoginData, IUserLoginData>) => (
         <FormControl
           isInvalid={!!form.errors[fieldName] && !!form.touched[fieldName]}
           mb={6}
@@ -112,14 +107,14 @@ const TextField: React.FC<TextFieldProps<IUserRegisterData>> = ({
 
 // Register
 
-interface RegisterProps {}
+interface LoginProps {}
 
-const Register: React.FC<RegisterProps> = () => {
+const Login: React.FC<LoginProps> = () => {
   const history = useHistory()
 
-  const isSubmitDisabled = (props: FormikProps<IUserRegisterData>) => {
+  const isSubmitDisabled = (props: FormikProps<IUserLoginData>) => {
     return (Object.getOwnPropertyNames(userData) as [
-      keyof IUserRegisterData
+      keyof IUserLoginData
     ]).some((key) => !!props.touched[key] && props.errors[key])
   }
 
@@ -127,19 +122,19 @@ const Register: React.FC<RegisterProps> = () => {
     <Formik
       initialValues={userData}
       onSubmit={async (userData, { setErrors }) => {
-        const fieldErrors = await registerUser(userData)
+        const fieldErrors = await login(userData)
 
         if (fieldErrors) {
           return setErrors(fieldErrors)
         }
 
-        return history.push('/login')
+        return history.push('/me')
       }}
     >
       {(props) => (
         <Form>
           <Heading as="h1" mb={6}>
-            Register
+            Login
           </Heading>
           {textFields.map((textField, i) => (
             <TextField
@@ -161,13 +156,13 @@ const Register: React.FC<RegisterProps> = () => {
           </Button>
           <Button
             as={Link}
-            to="/login"
+            to="/register"
             w="100%"
             colorScheme="gray"
             type="submit"
             size="sm"
           >
-            Alredy have an account? Login
+            Doesn't have an account? Register
           </Button>
         </Form>
       )}
@@ -175,4 +170,4 @@ const Register: React.FC<RegisterProps> = () => {
   )
 }
 
-export default Register
+export default Login
