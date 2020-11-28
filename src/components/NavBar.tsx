@@ -1,5 +1,11 @@
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
-import { Flex, Heading, Box, Button, useColorMode } from '@chakra-ui/react'
+import {
+  Flex,
+  Heading,
+  Button,
+  useColorMode,
+  Avatar,
+} from '@chakra-ui/react'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -19,12 +25,20 @@ const NavBar: React.FC<NavBarProps> = () => {
       <Link to="/">
         <Heading as="span">heyo</Heading>
       </Link>
-      <Box>
+      <Flex align="center">
         {loggedIn ? (
           <Link to="/me">
-            <Heading as="span" fontSize="lg" ml={2}>
-              {user?.name}
-            </Heading>
+            <Flex align="center">
+              <Avatar
+                justifySelf="center"
+                size="sm"
+                name={user?.name}
+                src="https://1-moda.com/wp-content/uploads/2016/02/Cool_And_Stylish_Profile_Pictures_For_Facebook_For_Girls_2014_Funny_Picture.jpg"
+              />
+              {/* <Heading as="span" fontSize="lg" ml={2}>
+                {user?.name}
+              </Heading> */}
+            </Flex>
           </Link>
         ) : null}
 
@@ -48,7 +62,7 @@ const NavBar: React.FC<NavBarProps> = () => {
             </Link>
           </>
         )}
-      </Box>
+      </Flex>
     </Flex>
   )
 }

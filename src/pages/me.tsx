@@ -1,4 +1,12 @@
-import { Box, Button, Heading, Skeleton, VStack } from '@chakra-ui/react'
+import {
+  Avatar,
+  Button,
+  Heading,
+  Skeleton,
+  StackDivider,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -19,20 +27,25 @@ const Me: React.FC<MeProps> = () => {
     dispatch(getUserInfo())
   }
 
-  const onLogoutClick = async () => {
-    await dispatch(logout())
+  const onLogoutClick = () => {
+    dispatch(logout())
     history.push('/')
   }
 
   const content = (
     <VStack>
-      <Box>
-        <Heading as="h1">{user?.name}</Heading>
-      </Box>
-      <Heading as="h4" fontSize="lg" color="gray.800">
+      <Avatar
+        justifySelf="center"
+        size="2xl"
+        name={user?.name}
+        src="https://1-moda.com/wp-content/uploads/2016/02/Cool_And_Stylish_Profile_Pictures_For_Facebook_For_Girls_2014_Funny_Picture.jpg"
+      />
+      <Heading as="span">{user?.name}</Heading>
+      <Text as="span" fontSize="lg">
         {user?.email}
-      </Heading>
-      <Button mt={4} colorScheme="purple" onClick={onLogoutClick}>
+      </Text>
+      <StackDivider borderColor="red" />
+      <Button colorScheme="purple" onClick={onLogoutClick}>
         Logout
       </Button>
     </VStack>
