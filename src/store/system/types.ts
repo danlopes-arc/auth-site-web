@@ -20,8 +20,8 @@ type SetTokenAction = {
 
 export type SystemState = {
   loggedIn: boolean
-  user?: UserInfo
-  token?: string
+  user: UserInfo | null
+  token: string | null
 }
 
 export type SystemAction = SetUserAction | LogoutAction | SetTokenAction

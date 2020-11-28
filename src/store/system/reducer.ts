@@ -2,7 +2,8 @@ import { SystemAction, SystemState, SET_USER, LOGOUT, SET_TOKEN } from './types'
 
 const initalState: SystemState = {
   loggedIn: false,
-  user: undefined,
+  user: null,
+  token: null
 }
 
 export const sytemReducer = (
@@ -19,14 +20,14 @@ export const sytemReducer = (
       return {
         ...state,
         loggedIn: false,
-        user: undefined,
-        token: undefined,
+        user: null,
+        token: null
       }
     case SET_TOKEN:
       return {
         ...state,
         token: action.token,
-        loggedIn: true,
+        loggedIn: true
       }
     default:
       return state

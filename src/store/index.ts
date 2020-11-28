@@ -7,9 +7,10 @@ const token = localStorage.getItem('token')
 
 const initialState: AppState = {
   system: {
-    token: token ?? undefined,
-    loggedIn: !!token
-  }
+    token: token,
+    loggedIn: !!token,
+    user: null,
+  },
 }
 
 const rootReducer = combineReducers({
@@ -38,7 +39,7 @@ export type AppAsyncAction = ThunkAction<
 >
 export type AppDispatch = ThunkDispatch<AppState, any, AppAction>
 
-store.subscribe(()=>{
+store.subscribe(() => {
   const state = store.getState()
   if (state.system.token !== localStorage.getItem('token') || undefined) {
     if (!state.system.token) {

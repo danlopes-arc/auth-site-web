@@ -29,7 +29,6 @@ export const login = (userData: UserLoginData): AppAsyncAction => async (
 ) => {
   try {
     const res = await axios.post<LoginResponseData>('api/users/login', userData)
-    localStorage.setItem('token', res.data.token)
     dispatch({
       type: SET_TOKEN,
       token: res.data.token,

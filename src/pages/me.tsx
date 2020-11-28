@@ -19,7 +19,7 @@ interface MeProps {}
 const Me: React.FC<MeProps> = () => {
   const dispatch: AppDispatch = useDispatch()
   const history = useHistory()
-  const user = useSelector<AppState, UserInfo | undefined>(
+  const user = useSelector<AppState, UserInfo | null>(
     (state) => state.system.user
   )
 
