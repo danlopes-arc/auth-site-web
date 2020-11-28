@@ -3,6 +3,15 @@ import thunk, { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import { sytemReducer } from './system/reducer'
 import { SystemAction } from './system/types'
 
+const token = localStorage.getItem('token')
+
+const initialState: AppState = {
+  system: {
+    token: token ?? undefined,
+    loggedIn: !!token
+  }
+}
+
 const rootReducer = combineReducers({
   system: sytemReducer,
 })
@@ -10,7 +19,7 @@ const rootReducer = combineReducers({
 const w: any = window
 const store = createStore(
   rootReducer,
-  {},
+  initialState,
   compose(
     applyMiddleware(thunk),
     w.__REDUX_DEVTOOLS_EXTENSION__ && w.__REDUX_DEVTOOLS_EXTENSION__()
