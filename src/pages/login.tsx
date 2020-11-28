@@ -1,25 +1,15 @@
 import { Button, Heading } from '@chakra-ui/react'
-import axios from 'axios'
-import { Form, Formik, FormikProps } from 'formik'
+import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import TextField, { TextFieldProps } from '../components/TextField'
-import { FieldErrors, LoginResponseData, UserLoginData } from '../types'
+import { ErrorWithData, FieldErrors, UserLoginData } from '../types'
 import { loginConstraints } from '../utils/validation/constaints'
 import { validateField } from '../utils/validation/validate'
 import { normalize, trimNormalize } from '../utils/normalization'
-
-async function login(userData: UserLoginData) {
-  try {
-    const res = await axios.post<LoginResponseData>('api/users/login', userData)
-    localStorage.setItem('token', res.data.token)
-  } catch (err) {
-    if (err.response?.data) {
-      const fieldErrors: FieldErrors<UserLoginData> = err.response.data.fields
-      return fieldErrors
-    }
-  }
-}
+import { login } from '../store/system/actions'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '../store'
 
 const textFields: TextFieldProps<UserLoginData>[] = [
   {
@@ -50,6 +40,8 @@ const userData: UserLoginData = {
 interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
+
+  const dispatch: AppDispatch = useDispatch()
   const history = useHistory()
 
   const isSubmitDisabled = (props: FormikProps<UserLoginData>) => {
@@ -58,19 +50,24 @@ const Login: React.FC<LoginProps> = () => {
     )
   }
 
+  const onSubmit = async (
+    userData: UserLoginData,
+    { setErrors }: FormikHelpers<UserLoginData>
+  ) => {
+    try {
+      await dispatch(login(userData))
+      history.push('/me')
+    } catch (err) {
+      if (err instanceof ErrorWithData) {
+        console.log(err.data)
+        const errors = err.data as FieldErrors<UserLoginData>
+        setErrors(errors as any)
+      }
+    }
+  }
+
   return (
-    <Formik
-      initialValues={userData}
-      onSubmit={async (userData, { setErrors }) => {
-        const fieldErrors = await login(userData)
-
-        if (fieldErrors) {
-          return setErrors(fieldErrors as any)
-        }
-
-        return history.push('/me')
-      }}
-    >
+    <Formik initialValues={userData} onSubmit={onSubmit}>
       {(props) => (
         <Form>
           <Heading as="h1" mb={6}>

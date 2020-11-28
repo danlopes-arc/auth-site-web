@@ -1,25 +1,15 @@
 import { Button, Heading } from '@chakra-ui/react'
-import axios from 'axios'
-import { Form, Formik, FormikProps } from 'formik'
+import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import TextField, { TextFieldProps } from '../components/TextField'
-import { FieldErrors, UserRegisterData } from '../types'
+import { ErrorWithData, FieldErrors, UserRegisterData } from '../types'
 import { registerConstraints } from '../utils/validation/constaints'
 import { validateField } from '../utils/validation/validate'
 import { normalize, trimNormalize } from '../utils/normalization'
-
-async function registerUser(userData: UserRegisterData) {
-  try {
-    await axios.post('api/users/register', userData)
-  } catch (err) {
-    if (err.response?.data) {
-      const fieldErrors: FieldErrors<UserRegisterData> =
-        err.response.data.fields
-      return fieldErrors
-    }
-  }
-}
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '../store'
+import { registerUser } from '../store/system/actions'
 
 const textFields: TextFieldProps<UserRegisterData>[] = [
   {
@@ -66,6 +56,7 @@ const userData: UserRegisterData = {
 interface RegisterProps {}
 
 const Register: React.FC<RegisterProps> = () => {
+  const dispatch: AppDispatch = useDispatch()
   const history = useHistory()
 
   const isSubmitDisabled = (props: FormikProps<UserRegisterData>) => {
@@ -74,18 +65,26 @@ const Register: React.FC<RegisterProps> = () => {
     ]).some((key) => !!props.touched[key] && props.errors[key])
   }
 
+  const onSubmit = async (
+    userData: UserRegisterData,
+    { setErrors }: FormikHelpers<UserRegisterData>
+  ) => {
+    try {
+      await dispatch(registerUser(userData))
+      history.push('/login')
+    } catch (err) {
+      if (err instanceof ErrorWithData) {
+        console.log(err.data)
+        const errors = err.data as FieldErrors<UserRegisterData>
+        setErrors(errors as any)
+      }
+    }
+  }
+
   return (
     <Formik
       initialValues={userData}
-      onSubmit={async (userData, { setErrors }) => {
-        const fieldErrors = await registerUser(userData)
-
-        if (fieldErrors) {
-          return setErrors(fieldErrors as any)
-        }
-
-        return history.push('/login')
-      }}
+      onSubmit={onSubmit}
     >
       {(props) => (
         <Form>

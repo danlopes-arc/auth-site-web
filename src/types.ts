@@ -35,3 +35,11 @@ export type MeResponseData = {
 export type LoginResponseData = {
   token: string
 }
+
+export class ErrorWithData<Data = any> extends Error {
+  readonly data: Data
+  constructor(data: Data, message?: string) {
+    super(message)
+    this.data = data
+  }
+}
