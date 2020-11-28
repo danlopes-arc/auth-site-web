@@ -3,6 +3,8 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import NavBar from './components/NavBar'
+import LoggedOutRoute from './components/routes/LoggedOutRoute'
+import PrivateRoute from './components/routes/PrivateRoute'
 
 import Index from './pages/index'
 import Login from './pages/login'
@@ -20,9 +22,9 @@ function App() {
             <Container p={10}>
               <Switch>
                 <Route path="/" exact component={Index} />
-                <Route path="/register" exact component={Register} />
-                <Route path="/login" exact component={Login} />
-                <Route path="/me" exact component={Me} />
+                <LoggedOutRoute path="/register" exact component={Register} />
+                <LoggedOutRoute path="/login" exact component={Login} />
+                <PrivateRoute path="/me" exact component={Me} />
               </Switch>
             </Container>
           </BrowserRouter>

@@ -1,6 +1,7 @@
 import { Box, Button, Heading, Skeleton, VStack } from '@chakra-ui/react'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import { AppDispatch, AppState } from '../store'
 import { getUserInfo, logout } from '../store/system/actions'
 import { UserInfo } from '../types'
@@ -9,6 +10,7 @@ interface MeProps {}
 
 const Me: React.FC<MeProps> = () => {
   const dispatch: AppDispatch = useDispatch()
+  const history = useHistory()
   const user = useSelector<AppState, UserInfo | undefined>(
     (state) => state.system.user
   )
@@ -17,8 +19,9 @@ const Me: React.FC<MeProps> = () => {
     dispatch(getUserInfo())
   }
 
-  const onLogoutClick = () => {
-    dispatch(logout())
+  const onLogoutClick = async () => {
+    await dispatch(logout())
+    history.push('/')
   }
 
   const content = (

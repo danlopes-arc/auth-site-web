@@ -90,7 +90,7 @@ const Login: React.FC<LoginProps> = () => {
             type="submit"
             mb={6}
           >
-            Register
+            Login
           </Button>
           <Button
             as={Link}

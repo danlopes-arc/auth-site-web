@@ -20,13 +20,13 @@ export const sytemReducer = (
         ...state,
         loggedIn: false,
         user: undefined,
-        token: undefined
+        token: undefined,
       }
     case SET_TOKEN:
       return {
         ...state,
         token: action.token,
-        loggedIn: true
+        loggedIn: true,
       }
     default:
       return state
