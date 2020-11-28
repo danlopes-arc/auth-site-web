@@ -28,3 +28,13 @@ export type AppAsyncAction = ThunkAction<
   AppAction
 >
 export type AppDispatch = ThunkDispatch<AppState, any, AppAction>
+
+store.subscribe(()=>{
+  const state = store.getState()
+  if (state.system.token !== localStorage.getItem('token') || undefined) {
+    if (!state.system.token) {
+      return localStorage.removeItem('token')
+    }
+    return localStorage.setItem('token', state.system.token)
+  }
+})
