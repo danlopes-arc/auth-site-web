@@ -7,9 +7,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { TITLE } from '../consts'
 import { AppDispatch, AppState } from '../store'
 import { getUserInfo, logout } from '../store/system/actions'
 import { UserInfo } from '../types'
@@ -19,9 +20,14 @@ interface MeProps {}
 const Me: React.FC<MeProps> = () => {
   const dispatch: AppDispatch = useDispatch()
   const history = useHistory()
+
   const user = useSelector<AppState, UserInfo | null>(
     (state) => state.system.user
   )
+
+  useEffect(() => {
+    document.title = `${TITLE} - Me`
+  })
 
   if (!user) {
     dispatch(getUserInfo())

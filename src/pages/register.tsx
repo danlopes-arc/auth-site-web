@@ -1,6 +1,6 @@
 import { Button, Heading } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import TextField, { TextFieldProps } from '../components/TextField'
 import { ErrorWithData, FieldErrors, UserRegisterData } from '../types'
@@ -10,6 +10,7 @@ import { normalize, trimNormalize } from '../utils/normalization'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../store'
 import { registerUser } from '../store/system/actions'
+import { TITLE } from '../consts'
 
 const textFields: TextFieldProps<UserRegisterData>[] = [
   {
@@ -59,6 +60,10 @@ const Register: React.FC<RegisterProps> = () => {
   const dispatch: AppDispatch = useDispatch()
   const history = useHistory()
 
+  useEffect(() => {
+    document.title = `${TITLE} - Register`
+  })
+
   const isSubmitDisabled = (props: FormikProps<UserRegisterData>) => {
     return (Object.getOwnPropertyNames(userData) as [
       keyof UserRegisterData
@@ -82,10 +87,7 @@ const Register: React.FC<RegisterProps> = () => {
   }
 
   return (
-    <Formik
-      initialValues={userData}
-      onSubmit={onSubmit}
-    >
+    <Formik initialValues={userData} onSubmit={onSubmit}>
       {(props) => (
         <Form>
           <Heading as="h1" mb={6}>

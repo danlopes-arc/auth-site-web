@@ -23,7 +23,7 @@ const NavBar: React.FC<NavBarProps> = () => {
   return (
     <Flex as="nav" align="center" justify="space-between" p={4} boxShadow="lg">
       <Link to="/">
-        <Heading as="span">heyo</Heading>
+        <Heading as="span">Authsite</Heading>
       </Link>
       <Flex align="center">
         {loggedIn ? (

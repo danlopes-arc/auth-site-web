@@ -1,6 +1,6 @@
 import { Button, Heading } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import TextField, { TextFieldProps } from '../components/TextField'
 import { ErrorWithData, FieldErrors, UserLoginData } from '../types'
@@ -10,6 +10,7 @@ import { normalize, trimNormalize } from '../utils/normalization'
 import { login } from '../store/system/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../store'
+import { TITLE } from '../consts'
 
 const textFields: TextFieldProps<UserLoginData>[] = [
   {
@@ -40,9 +41,12 @@ const userData: UserLoginData = {
 interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
-
   const dispatch: AppDispatch = useDispatch()
   const history = useHistory()
+
+  useEffect(() => {
+    document.title = `${TITLE} - Login`
+  })
 
   const isSubmitDisabled = (props: FormikProps<UserLoginData>) => {
     return (Object.getOwnPropertyNames(userData) as [keyof UserLoginData]).some(
