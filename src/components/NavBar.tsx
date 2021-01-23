@@ -33,7 +33,9 @@ const NavBar: React.FC<NavBarProps> = () => {
                 justifySelf="center"
                 size="sm"
                 name={user?.name}
-                src="https://1-moda.com/wp-content/uploads/2016/02/Cool_And_Stylish_Profile_Pictures_For_Facebook_For_Girls_2014_Funny_Picture.jpg"
+                src="/pictures/default-profile-pic.jpg"
+                borderWidth="2px"
+                borderColor="#AAA"
               />
               {/* <Heading as="span" fontSize="lg" ml={2}>
                 {user?.name}

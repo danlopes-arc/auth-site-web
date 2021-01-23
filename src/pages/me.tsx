@@ -44,7 +44,9 @@ const Me: React.FC<MeProps> = () => {
         justifySelf="center"
         size="2xl"
         name={user?.name}
-        src="https://1-moda.com/wp-content/uploads/2016/02/Cool_And_Stylish_Profile_Pictures_For_Facebook_For_Girls_2014_Funny_Picture.jpg"
+        src="/pictures/default-profile-pic.jpg"
+        borderWidth="2px"
+        borderColor="#AAA"
       />
       <Heading as="span">{user?.name}</Heading>
       <Text as="span" fontSize="lg">
