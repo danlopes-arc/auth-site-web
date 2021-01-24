@@ -18,13 +18,14 @@ const rootReducer = combineReducers({
 })
 
 const w: any = window
+const devTools =
+  (w.__REDUX_DEVTOOLS_EXTENSION__ && w.__REDUX_DEVTOOLS_EXTENSION__()) ||
+  ((next: any) => next)
+
 const store = createStore(
   rootReducer,
   initialState,
-  compose(
-    applyMiddleware(thunk),
-    w.__REDUX_DEVTOOLS_EXTENSION__ && w.__REDUX_DEVTOOLS_EXTENSION__()
-  )
+  compose(applyMiddleware(thunk), devTools)
 )
 
 export default store
