@@ -42,6 +42,19 @@ export const login = (userData: UserLoginData): AppAsyncAction => async (
   }
 }
 
+export const githubLogin = (code: string): AppAsyncAction => async (dispatch) => {
+  try {
+    const res = await axios.get(`/api/auth/github/login?code=${code}`)
+
+    dispatch({
+      type: SET_TOKEN,
+      token: res.data.token,
+    })
+  } catch (err) {
+    throw new Error('Something went wrong')
+  }
+}
+
 export const registerUser = (
   userData: UserRegisterData
 ): AppAsyncAction => async () => {
