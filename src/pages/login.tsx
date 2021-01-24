@@ -11,6 +11,7 @@ import { login } from '../store/system/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../store'
 import { TITLE } from '../consts'
+import ExternalAuthButtons from '../components/ExternalAuthButtons'
 
 const textFields: TextFieldProps<UserLoginData>[] = [
   {
@@ -77,6 +78,9 @@ const Login: React.FC<LoginProps> = () => {
           <Heading as="h1" mb={6}>
             Login
           </Heading>
+
+          <ExternalAuthButtons />
+
           {textFields.map((textField, i) => (
             <TextField
               key={i}

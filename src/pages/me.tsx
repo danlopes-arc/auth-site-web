@@ -1,8 +1,9 @@
 import {
   Avatar,
   Button,
+  Center,
   Heading,
-  Skeleton,
+  Spinner,
   StackDivider,
   Text,
   VStack,
@@ -59,7 +60,17 @@ const Me: React.FC<MeProps> = () => {
     </VStack>
   )
 
-  return <>{!user ? <Skeleton>{content}</Skeleton> : <>{content}</>}</>
+  return (
+    <>
+      {!user ? (
+        <Center>
+          <Spinner size="xl" />
+        </Center>
+      ) : (
+        content
+      )}
+    </>
+  )
 }
 
 export default Me

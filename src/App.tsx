@@ -2,6 +2,7 @@ import { ChakraProvider, Container } from '@chakra-ui/react'
 import React from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import GitHubAuth from './components/GitHubAuth'
 import NavBar from './components/NavBar'
 import LoggedOutRoute from './components/routes/LoggedOutRoute'
 import PrivateRoute from './components/routes/PrivateRoute'
@@ -22,6 +23,7 @@ function App() {
             <Container p={10}>
               <Switch>
                 <Route path="/" exact component={Index} />
+                <Route path="/auth/github/callback" exact component={GitHubAuth} />
                 <LoggedOutRoute path="/register" exact component={Register} />
                 <LoggedOutRoute path="/login" exact component={Login} />
                 <PrivateRoute path="/me" exact component={Me} />

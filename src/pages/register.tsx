@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../store'
 import { registerUser } from '../store/system/actions'
 import { TITLE } from '../consts'
+import ExternalAuthButtons from '../components/ExternalAuthButtons'
 
 const textFields: TextFieldProps<UserRegisterData>[] = [
   {
@@ -93,6 +94,9 @@ const Register: React.FC<RegisterProps> = () => {
           <Heading as="h1" mb={6}>
             Register
           </Heading>
+
+          <ExternalAuthButtons />
+
           {textFields.map((textField, i) => (
             <TextField
               key={i}
