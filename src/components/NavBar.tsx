@@ -5,6 +5,7 @@ import {
   Button,
   useColorMode,
   Avatar,
+  Tooltip,
 } from '@chakra-ui/react'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -29,17 +30,14 @@ const NavBar: React.FC<NavBarProps> = () => {
         {loggedIn ? (
           <Link to="/me">
             <Flex align="center">
-              <Avatar
-                justifySelf="center"
-                size="sm"
-                name={user?.name}
-                src="/pictures/default-profile-pic.jpg"
-                borderWidth="2px"
-                borderColor="#AAA"
-              />
-              {/* <Heading as="span" fontSize="lg" ml={2}>
-                {user?.name}
-              </Heading> */}
+              <Tooltip hasArrow  label={user?.name} aria-label={user?.name}>
+                <Avatar
+                  justifySelf="center"
+                  size="sm"
+                  name={user?.name}
+                  // src="/pictures/default-profile-pic.jpg"
+                />
+              </Tooltip>
             </Flex>
           </Link>
         ) : null}

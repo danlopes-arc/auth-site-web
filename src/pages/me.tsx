@@ -45,9 +45,7 @@ const Me: React.FC<MeProps> = () => {
         justifySelf="center"
         size="2xl"
         name={user?.name}
-        src="/pictures/default-profile-pic.jpg"
-        borderWidth="2px"
-        borderColor="#AAA"
+        // src="/pictures/default-profile-pic.jpg"
       />
       <Heading as="span">{user?.name}</Heading>
       <Text as="span" fontSize="lg">
