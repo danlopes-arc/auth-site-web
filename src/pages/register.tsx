@@ -80,7 +80,6 @@ const Register: React.FC<RegisterProps> = () => {
       history.push('/login')
     } catch (err) {
       if (err instanceof ErrorWithData) {
-        console.log(err.data)
         const errors = err.data as FieldErrors<UserRegisterData>
         setErrors(errors as any)
       }

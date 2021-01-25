@@ -64,7 +64,6 @@ const Login: React.FC<LoginProps> = () => {
       history.push('/me')
     } catch (err) {
       if (err instanceof ErrorWithData) {
-        console.log(err.data)
         const errors = err.data as FieldErrors<UserLoginData>
         setErrors(errors as any)
       }

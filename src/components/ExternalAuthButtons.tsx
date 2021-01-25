@@ -8,7 +8,6 @@ interface ExternalAuthButtonsProps {}
 
 const ExternalAuthButtons: React.FC<ExternalAuthButtonsProps> = () => {
   const onGithubClick = () => {
-    console.log("id:", process.env.REACT_APP_GITHUB_CLIENT_ID)
     const query = QueryString.stringify(
       {
         response_type: 'code',
