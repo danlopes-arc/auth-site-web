@@ -34,7 +34,7 @@ const Index: React.FC<IndexProps> = () => {
     'Passport.js',
     'REST API',
     'GitHub Auth App',
-    'bcryp Hashing'
+    'bcrypt Hashing'
   ]
 
   return (
@@ -57,7 +57,7 @@ const Index: React.FC<IndexProps> = () => {
         and a bult-in dark mode.
       </Text>
       <Heading as="h3" mb={4} size="xl">
-        Thechnologies
+        Technologies
       </Heading>
       <Box mb={5}>
         <Heading as="h5" mb={1} size="md">
