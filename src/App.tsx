@@ -20,7 +20,7 @@ function App() {
         <div className="App">
           <BrowserRouter>
             <NavBar></NavBar>
-            <Container p={10}>
+            <Container pt={10} maxWidth={1000}>
               <Switch>
                 <Route path="/" exact component={Index} />
                 <Route path="/auth/github/callback" exact component={GitHubAuth} />

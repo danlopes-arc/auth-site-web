@@ -1,4 +1,4 @@
-import { Button, Heading } from '@chakra-ui/react'
+import { Button, Container, Heading } from '@chakra-ui/react'
 import { Form, Formik, FormikHelpers, FormikProps } from 'formik'
 import React, { useEffect } from 'react'
 import { Link, useHistory } from 'react-router-dom'
@@ -88,47 +88,49 @@ const Register: React.FC<RegisterProps> = () => {
   }
 
   return (
-    <Formik initialValues={userData} onSubmit={onSubmit}>
-      {(props) => (
-        <Form>
-          <Heading as="h1" mb={6}>
-            Register
-          </Heading>
+    <Container maxWidth={400}>
+      <Formik initialValues={userData} onSubmit={onSubmit}>
+        {(props) => (
+          <Form>
+            <Heading as="h1" mb={6}>
+              Register
+            </Heading>
 
-          <ExternalAuthButtons />
+            <ExternalAuthButtons />
 
-          {textFields.map((textField, i) => (
-            <TextField
-              key={i}
-              fieldName={textField.fieldName}
-              inputType={textField.inputType}
-              fieldText={textField.fieldText}
-              validate={textField.validate}
-            />
-          ))}
-          <Button
-            w="100%"
-            colorScheme="purple"
-            isLoading={props.isSubmitting}
-            isDisabled={isSubmitDisabled(props)}
-            type="submit"
-            mb={6}
-          >
-            Register
-          </Button>
-          <Button
-            as={Link}
-            to="/login"
-            w="100%"
-            colorScheme="gray"
-            type="submit"
-            size="sm"
-          >
-            Alredy have an account? Login
-          </Button>
-        </Form>
-      )}
-    </Formik>
+            {textFields.map((textField, i) => (
+              <TextField
+                key={i}
+                fieldName={textField.fieldName}
+                inputType={textField.inputType}
+                fieldText={textField.fieldText}
+                validate={textField.validate}
+              />
+            ))}
+            <Button
+              w="100%"
+              colorScheme="purple"
+              isLoading={props.isSubmitting}
+              isDisabled={isSubmitDisabled(props)}
+              type="submit"
+              mb={6}
+            >
+              Register
+            </Button>
+            <Button
+              as={Link}
+              to="/login"
+              w="100%"
+              colorScheme="gray"
+              type="submit"
+              size="sm"
+            >
+              Alredy have an account? Login
+            </Button>
+          </Form>
+        )}
+      </Formik>
+    </Container>
   )
 }
 
