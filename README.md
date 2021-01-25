@@ -8,8 +8,8 @@ Authsite is a simple authentication webapp built with the MERN Stack.
 
 * The front-end is a React App that uses Redux to persist the user information, and Chakra as the UI Framework which provides a modern look and a bult-in dark mode.
 
-> ### Back-End Repo
-> The back-end code for this app is [here](https://github.com/danlopes-arc/authsite-server)
+## Back-End Repo
+The front-end code for this app can be found at [danlopes-arc/authsite-server](https://github.com/danlopes-arc/authsite-server)
 
 ## Technologies
 #### For the Back-End
